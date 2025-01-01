@@ -14,9 +14,10 @@ import {
   Button,
 } from "@mui/material";
 import Grid2 from "@mui/material/Grid2";
-import ModalRun from "../components/ModalRun";
+import Modal from "../components/Modal";
 
-export default function Test() {
+export default function Run() {
+  //   Rename title
   useEffect(() => {
     document.title = "Test Page";
   }, []);
@@ -114,7 +115,7 @@ export default function Test() {
             padding: 2,
           }}>
           {llmNames.length > 0 ? (
-            llmNames.map((llmName) => <ModalRun key={llmName} modalName={llmName} />)
+            llmNames.map((llmName) => <Modal key={llmName} modalName={llmName} />)
           ) : (
             <Typography variant="body1" align="center" gutterBottom>
               No LLMs selected. Please select at least one LLM to run the experiment.
