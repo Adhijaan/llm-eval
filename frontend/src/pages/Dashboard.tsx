@@ -7,19 +7,27 @@ const Dashboard: React.FC = () => {
     <>
       <AppBar position="static">
         <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            My Dashboard
+          {/* Title on the left */}
+          <Typography variant="h6" sx={{ flexGrow: 0.1 }}>
+            Llemval
           </Typography>
+
+          {/* Buttons in the middle */}
           <Box>
-            <NavLink to="/dashboard/Test">
+            <NavLink to="/dashboard/Test" style={{ textDecoration: "none" }}>
               <Button color="inherit">Test</Button>
             </NavLink>
-            <NavLink to="/dashboard/Experiments">
-              <Button color="inherit">Expirements</Button>
+            <NavLink to="/dashboard/Experiments" style={{ textDecoration: "none" }}>
+              <Button color="inherit">Experiments</Button>
             </NavLink>
-            <NavLink to="/dashboard/History">
+            <NavLink to="/dashboard/History" style={{ textDecoration: "none" }}>
               <Button color="inherit">History</Button>
             </NavLink>
+          </Box>
+
+          {/* Profile button all the way to the right */}
+          <Box sx={{ marginLeft: "auto" }}>
+            <Button color="inherit">Profile</Button>
           </Box>
         </Toolbar>
       </AppBar>
