@@ -8,8 +8,13 @@ export const createTestCase = async (testCase: Omit<TestCase, "id">) => {
   return response.data;
 };
 
-export const deleteTestCase = async (id: number) => {
-  await axios.delete(`${API_BASE_URL}/api/test-cases/${id}`);
+export const deleteTestCase = async (testCaseId: number) => {
+  await axios.delete(`${API_BASE_URL}/api/test-cases/${testCaseId}`);
+};
+
+export const getExperiments = async () => {
+  const response = await axios.get(`${API_BASE_URL}/api/experiments`);
+  return response.data;
 };
 
 export const createExperiment = async (experiment: Omit<Experiment, "id">) => {
@@ -17,8 +22,14 @@ export const createExperiment = async (experiment: Omit<Experiment, "id">) => {
   return response.data;
 };
 
-export const runExperiment = async (experimentId: number) => {
-  const response = await axios.post(`${API_BASE_URL}/api/experiments/${experimentId}/run`);
+export const deleteExperiment = async (experimentId: number) => {
+  await axios.delete(`${API_BASE_URL}/api/experiments/${experimentId}`);
+};
+
+export const runExperiment = async (experimentId: number, model: string) => {
+  const response = await axios.get(`${API_BASE_URL}/api/experiments/${experimentId}/run`, {
+    params: { model },
+  });
   return response.data;
 };
 
