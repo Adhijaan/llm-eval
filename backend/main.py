@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.api import api_router
+from routers import experiments, test_cases, results
 
 app = FastAPI()
 
@@ -13,8 +13,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include the API router
-app.include_router(api_router)
+# Include routers
+app.include_router(experiments.router, prefix="/api/experiments", tags=["experiments"])
+app.include_router(test_cases.router, prefix="/api/test-cases", tags=["test-cases"])
+app.include_router(results.router, prefix="/api/results", tags=["results"])
 
 # Run the app
 if __name__ == "__main__":
