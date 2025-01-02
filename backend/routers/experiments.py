@@ -5,10 +5,11 @@ from models.experiment import Experiment
 
 router = APIRouter()
 
-@router.get("/", response_model=List[ExperimentResponse])
+# @router.get("/", response_model=List[ExperimentResponse])
+@router.get("/")
 async def get_experiments():
-    # Implementation here
-    pass
+    # Implementation here'
+    return {"message": "Not implemented yet"}
 
 @router.post("/", response_model=ExperimentResponse)
 async def create_experiment(experiment: ExperimentCreate):
