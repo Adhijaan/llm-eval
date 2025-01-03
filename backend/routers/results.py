@@ -1,21 +1,13 @@
-from fastapi import APIRouter, HTTPException
-from typing import List
-from schemas.test_case_result import TestCaseResult, TestCaseResultCreate, TestCaseResultResponse
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from db import get_db
+from models.test_case_result import TestCaseResult as TestCaseResultModel
+from schemas.test_case_result import TestCaseResult
 
 router = APIRouter()
 
-# In-memory storage
-results = []
-
-@router.get("/", response_model=List[TestCaseResultResponse])
-async def get_results():
+# Get all results
+@router.get("/", response_model=list[TestCaseResult])
+def get_results(db: Session = Depends(get_db)):
+    results = db.query(TestCaseResultModel).all()
     return results
-
-@router.post("/", response_model=TestCaseResultResponse)
-async def create_result(result: TestCaseResultCreate):
-    new_result = {
-        "id": len(results) + 1,
-        **result.model_dump(),
-    }
-    results.append(new_result)
-    return new_result

@@ -1,10 +1,34 @@
-from pydantic_settings import BaseSettings  # Updated import
+# config.py
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+from dotenv import load_dotenv
+import os
 
-class Settings(BaseSettings):
-    supabase_url: str
-    supabase_key: str
+# Load environment variables from .env file
+load_dotenv()
 
-    class Config:
-        env_file = ".env"  # Load environment variables from the .env file
+# Supabase connection details
+DB_USER = os.getenv("USER")
+DB_PASSWORD = os.getenv("PASSWORD")
+DB_HOST = os.getenv("HOST")
+DB_PORT = os.getenv("PORT")
+DB_NAME = os.getenv("DBNAME")
 
-settings = Settings()
+# Construct the DATABASE_URL
+DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+
+# SQLAlchemy Engine with connection pooling
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True,  # Ensures dead connections are discarded
+    pool_size=10,        # Number of connections in the pool
+    max_overflow=20,     # Additional connections beyond pool_size
+    connect_args={"sslmode": "require"}  # Enforce SSL for Supabase
+)
+
+# Create a configured SessionLocal class
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Create a base class for SQLAlchemy models
+Base = declarative_base()
