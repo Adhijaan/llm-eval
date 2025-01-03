@@ -1,13 +1,13 @@
 # experiments.py
 from fastapi import APIRouter, Depends, HTTPException
-from config import supabase_client
+from config import get_supabase_client
 from schemas.experiment import ExperimentCreate, Experiment
 
 router = APIRouter()
 
 # Get all experiments
 @router.get("/", response_model=list[Experiment])
-def get_experiments(db=Depends(supabase_client)):
+def get_experiments(db=Depends(get_supabase_client)):
     response = db.table('experiments').select('*').execute()
     experiments = response.data
     return experiments
@@ -16,7 +16,7 @@ def get_experiments(db=Depends(supabase_client)):
 @router.post("/", response_model=Experiment)
 def create_experiment(
     experiment_data: ExperimentCreate,  # Use Pydantic schema for request validation
-    db=Depends(supabase_client)
+    db=Depends(get_supabase_client)
 ):
     response = db.table('experiments').insert({
         "name": experiment_data.name,
@@ -30,7 +30,7 @@ def create_experiment(
 @router.delete("/{experiment_id}", response_model=Experiment)
 def delete_experiment(
     experiment_id: int,
-    db=Depends(supabase_client)
+    db=Depends(get_supabase_client)
 ):
     response = db.table('experiments').delete().eq('id', experiment_id).execute()
     if not response.data:
@@ -43,7 +43,7 @@ def delete_experiment(
 def run_experiment(
     experiment_id: int,
     model: str,
-    db=Depends(supabase_client)
+    db=Depends(get_supabase_client)
 ):
     # Placeholder logic for running an experiment
     return {"experiment_id": experiment_id, "model": model, "status": "success"}

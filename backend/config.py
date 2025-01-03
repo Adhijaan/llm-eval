@@ -14,6 +14,8 @@ load_dotenv()
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 supabase_client = supabase.create_client(SUPABASE_URL, SUPABASE_KEY)
+def get_supabase_client():
+    return supabase_client
 
 
 
@@ -40,4 +42,4 @@ supabase_client = supabase.create_client(SUPABASE_URL, SUPABASE_KEY)
 # SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Create a base class for SQLAlchemy models
-Base = declarative_base()
+# Base = declarative_base()

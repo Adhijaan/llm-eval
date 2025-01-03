@@ -3,13 +3,13 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers import experiments, test_cases, results
 
-# Importing models to create tables
-from models.user import User
-from models.experiment import Experiment
-from models.test_case import TestCase
-from models.experiment_run import ExperimentRun
-from models.test_case_result import TestCaseResult
-from models.experiment_test_case import ExperimentTestCases
+# # Importing models to create tables
+# from models.user import User
+# from models.experiment import Experiment
+# from models.test_case import TestCase
+# from models.experiment_run import ExperimentRun
+# from models.test_case_result import TestCaseResult
+# from models.experiment_test_case import ExperimentTestCases
 
 app = FastAPI()
 
