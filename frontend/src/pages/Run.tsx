@@ -6,7 +6,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  SelectChangeEvent,
   FormGroup,
   FormControlLabel,
   Checkbox,
@@ -15,33 +14,51 @@ import {
 } from "@mui/material";
 import Grid2 from "@mui/material/Grid2";
 import Modal from "../components/Modal";
+import { Experiment, ExperimentResponse } from "../types";
+import { getExperiments, runExperiment } from "../api";
 
 export default function Run() {
-  //   Rename title
+  const [experiments, setExperiments] = useState<Experiment[]>([]);
+  const [selectedExperiment, setSelectedExperiment] = useState<number | null>(null);
+  const [llmNames, setLlmNames] = useState<string[]>([]);
+  const [responses, setResponses] = useState<{ [llmName: string]: ExperimentResponse[] }>({});
+
   useEffect(() => {
     document.title = "Test Page";
+    getExperiments().then((data) => setExperiments(data));
   }, []);
 
-  const [Experiment, setExperiment] = useState("");
-  const handleChange = (event: SelectChangeEvent) => {
-    setExperiment(event.target.value as string);
-  };
-
-  const [llmNames, setLlmNames] = useState<string[]>([]);
   const handleCheckboxChange = (llmName: string) => {
     setLlmNames((prev) => (prev.includes(llmName) ? prev.filter((name) => name !== llmName) : [...prev, llmName]));
   };
-  useEffect(() => {
-    console.log("Updated LLM Names:", llmNames);
-  }, [llmNames]);
 
-  const handleRun = () => {
-    if (llmNames.length === 0) {
-      alert("Please select at least one LLM to run the experiment.");
+  const handleRunExperiment = async () => {
+    if (!selectedExperiment) {
+      alert("Please select an experiment.");
       return;
     }
-    console.log("Running Experiment:", Experiment, "on LLMs:", llmNames);
+
+    const newResponses: { [llmName: string]: ExperimentResponse[] } = {};
+    for (const llmName of llmNames) {
+      try {
+        console.log(`Running experiment for ${llmName}...`);
+        const data = await runExperiment(selectedExperiment, llmName);
+        console.log(`Experiment for ${llmName} completed.`, data);
+        const experimentResponses: ExperimentResponse[] = data.map((item: any) => ({
+          user_prompt: item.user_prompt,
+          response: item.response,
+        }));
+        newResponses[llmName] = experimentResponses || [];
+      } catch (err) {
+        console.error(`Failed to run experiment for ${llmName}:`, err);
+        newResponses[llmName] = [];
+      }
+    }
+
+    console.log("Updated Responses:", newResponses); // Debugging
+    setResponses(newResponses);
   };
+
   return (
     <>
       <Typography variant="h3" align="center" gutterBottom>
@@ -58,53 +75,47 @@ export default function Run() {
             <Select
               labelId="experiment-select"
               id="experiment-select"
-              value={Experiment}
+              value={selectedExperiment?.toString() ?? ""}
               label="Experiment Name"
-              onChange={handleChange}>
-              <MenuItem value={"ExperimentID"}>ExperimentName</MenuItem>
-              {/* Add more MenuItem components for other experiments */}
+              onChange={(event) => setSelectedExperiment(Number(event.target.value))}>
+              {experiments.map((experiment) => (
+                <MenuItem key={experiment.id} value={experiment.id}>
+                  {experiment.name}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
-          <Button variant="contained" color="primary" onClick={handleRun}>
+          <Button variant="contained" color="primary" onClick={handleRunExperiment}>
             Run
           </Button>
         </Box>
 
         <FormControl component="fieldset" fullWidth>
           <FormGroup row sx={{ justifyContent: "center" }}>
-            <Grid2 size={4} container spacing={2} justifyContent="center">
-              <Grid2 size={4}>
+            <Grid2 container spacing={2} justifyContent="center">
+              <Grid2>
                 <FormControlLabel
-                  control={<Checkbox onChange={() => handleCheckboxChange("openai")} />}
-                  label="OpenAI"
+                  control={<Checkbox onChange={() => handleCheckboxChange("llama-3.3-70b-versatile")} />}
+                  label="llama-3.3-70b-versatile"
                 />
               </Grid2>
-              <Grid2 size={4}>
+              <Grid2>
                 <FormControlLabel
-                  control={<Checkbox onChange={() => handleCheckboxChange("cohere")} />}
-                  label="Cohere"
+                  control={<Checkbox onChange={() => handleCheckboxChange("gemma2-9b-it")} />}
+                  label="gemma2-9b-it"
                 />
               </Grid2>
-              <Grid2 size={4}>
+              <Grid2>
                 <FormControlLabel
-                  control={<Checkbox onChange={() => handleCheckboxChange("huggingface")} />}
-                  label="Hugging Face"
+                  control={<Checkbox onChange={() => handleCheckboxChange("mixtral-8x7b-32768")} />}
+                  label="mixtral-8x7b-32768"
                 />
               </Grid2>
             </Grid2>
           </FormGroup>
         </FormControl>
       </Container>
-      <Container maxWidth="lg">
-        <Box sx={{ mt: 2 }}>
-          <Typography variant="h6" align="center" gutterBottom>
-            System Prompt
-          </Typography>
-          <Typography variant="body1" align="center" gutterBottom>
-            System Prompt Text
-          </Typography>
-        </Box>
-      </Container>
+
       <Container maxWidth="lg">
         <Box
           sx={{
@@ -115,7 +126,14 @@ export default function Run() {
             padding: 2,
           }}>
           {llmNames.length > 0 ? (
-            llmNames.map((llmName) => <Modal key={llmName} modalName={llmName} />)
+            llmNames.map((llmName) => (
+              <Modal
+                key={llmName}
+                modalName={llmName}
+                selectedExperiment={selectedExperiment!}
+                responses={responses[llmName] || []}
+              />
+            ))
           ) : (
             <Typography variant="body1" align="center" gutterBottom>
               No LLMs selected. Please select at least one LLM to run the experiment.

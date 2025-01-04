@@ -27,9 +27,10 @@ export const deleteExperiment = async (experimentId: number) => {
 };
 
 export const runExperiment = async (experimentId: number, model: string) => {
-  const response = await axios.get(`${API_BASE_URL}/api/experiments/${experimentId}/run`, {
-    params: { model },
+  const response = await axios.post(`${API_BASE_URL}/api/experiments/${experimentId}/run`, {
+    model,
   });
+  console.log(response);
   return response.data;
 };
 

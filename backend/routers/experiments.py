@@ -2,6 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from config import get_supabase_client
 from schemas.experiment import ExperimentCreate, Experiment
+from pydantic import BaseModel
 from groq import Groq
 from dotenv import load_dotenv
 import os
@@ -46,12 +47,16 @@ def delete_experiment(
     return db_experiment
 
 # Run an experiment
+class RunExperimentRequest(BaseModel):
+    model: str
+
 @router.post("/{experiment_id}/run")
 def run_experiment(
     experiment_id: int,
-    model: str,
+    request: RunExperimentRequest,  # Accept the request body
     db=Depends(get_supabase_client)
 ):
+    model = request.model 
     # Fetch the system prompt
     experiment_data = db.table('experiments') \
                         .select('system_prompt') \
@@ -61,7 +66,6 @@ def run_experiment(
     if not experiment_data:
         return {"error": "Experiment not found"}
     system_prompt = experiment_data[0]['system_prompt']
-    print(system_prompt)
 
     # Fetch associated test case IDs in one query
     associated_testcases = db.table('experimenttestcases') \
@@ -91,7 +95,8 @@ def run_experiment(
         )
         return chat_completion.choices[0].message.content
     
-    experiment_result = [{user_message, get_response(user_message)} for user_message in user_messages]
+    experiment_result = [{"user_prompt": user_message, "response" : get_response(user_message)} for user_message in user_messages]
 
+    print(experiment_result)
     return experiment_result
 

@@ -1,25 +1,26 @@
-import { useEffect, useState } from "react";
 import { Card, CardHeader, CardContent, Typography } from "@mui/material";
+import { ExperimentResponse } from "../types";
 
-export default function Modal({ modalName = "Modal Name" }) {
-  const [responses, setResponses] = useState<string[]>([]);
+interface ModalProps {
+  modalName: string;
+  selectedExperiment: number;
+  responses: ExperimentResponse[];
+}
 
-  useEffect(() => {
-    setResponses(["Response 1", "Response 2", "Response 3"]);
-  }, []);
-
+export default function Modal({ modalName, responses }: ModalProps) {
   return (
     <Card sx={{ maxWidth: 345, minWidth: 300, minHeight: 300 }}>
       <CardHeader title={modalName} sx={{ textAlign: "center" }} />
-      {/* <ModalResponses /> */}
       <CardContent sx={{ paddingTop: 0 }}>
         {responses.length === 0 ? (
-          <></>
+          <Typography variant="body2" sx={{ marginTop: 2 }}>
+            No responses yet. Run the experiment to see results.
+          </Typography>
         ) : (
           responses.map((response, index) => (
-            <Typography variant="body1" key={index}>
-              <Typography variant="h6"> Test {index + 1} </Typography>
-              {response}
+            <Typography variant="body1" key={index} sx={{ marginTop: 2 }}>
+              <Typography variant="h6">{response.user_prompt}</Typography>
+              {response.response}
             </Typography>
           ))
         )}
