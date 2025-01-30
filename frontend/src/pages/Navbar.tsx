@@ -1,3 +1,4 @@
+// pages/Navbar.tsx
 import React from "react";
 import { AppBar, Toolbar, Typography, Button, Box, Container } from "@mui/material";
 import { Outlet, NavLink } from "react-router-dom";
@@ -31,7 +32,7 @@ const Dashboard: React.FC = () => {
           </Box>
         </Toolbar>
       </AppBar>
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
+      <Container maxWidth={false} sx={{ mt: 8 }}>
         <Outlet /> {/* This renders the nested sub-pages */}
       </Container>
     </>
