@@ -1,4 +1,4 @@
-// src/components/Welcome.jsx
+// pages//Welcome.jsx
 import { Link } from "react-router-dom";
 import { Typography, Button, Box } from "@mui/material";
 
@@ -30,7 +30,7 @@ export default function Welcome() {
           fontSize: "1.1rem",
         }}
         component={Link}
-        to="/Dashboard">
+        to="/">
         Get Started
       </Button>
     </Box>
