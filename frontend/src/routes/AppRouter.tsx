@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Welcome from "../pages/Welcome";
-import Navbar from "../pages/Navbar";
+import Navbar from "../pages/Layout";
 import Run from "../pages/Run";
 import Build from "../pages/Build";
 import Log from "../pages/Log";
@@ -8,8 +8,8 @@ import Log from "../pages/Log";
 const AppRoutes = () => (
   <Router>
     <Routes>
-      <Route path="/" element={<Welcome />} />
-      <Route path="/Navbar" element={<Navbar />}>
+      <Route path="/Welcome" element={<Welcome />} />
+      <Route path="/" element={<Navbar />}>
         <Route index element={<Run />} />
         <Route path="Run" element={<Run />} />
         <Route path="Build" element={<Build />} />
