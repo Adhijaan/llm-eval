@@ -2,15 +2,19 @@
 import { useState, useEffect } from "react";
 import { Button, Container, Typography } from "@mui/material";
 import { red } from "@mui/material/colors";
-import { Experiment } from "../types";
-import { getExperiments } from "../api";
 import ExperimentDesc from "../components/ExperimentDesc";
+import { useExperiments } from "../contexts/ExperimentContext";
+
 export default function Build() {
-  const [experiments, setExperiments] = useState<Experiment[]>([]);
+  const { experiments, loading, error } = useExperiments();
+  const [selectedExperiment, setSelectedExperiment] = useState<number | null>(null);
+
   useEffect(() => {
     document.title = "Build";
-    getExperiments().then((data) => setExperiments(data));
   }, []);
+
+  if (error) return <Typography color="error">{error}</Typography>;
+
   return (
     <>
       <Typography variant="h3" align="center" gutterBottom>
@@ -28,9 +32,11 @@ export default function Build() {
         </Button>
       </Container>
       <Container maxWidth="lg"></Container>
-      {experiments.map((experiment, index) => (
-        <ExperimentDesc key={index} experiment={experiment} />
-      ))}
+      {loading ? (
+        <Typography>Loading...</Typography>
+      ) : (
+        experiments.map((experiment, index) => <ExperimentDesc key={index} experiment={experiment} />)
+      )}
     </>
   );
 }

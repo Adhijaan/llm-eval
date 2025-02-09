@@ -16,18 +16,20 @@ import {
 import Grid2 from "@mui/material/Grid2";
 import Modal from "../components/Modal";
 import { Experiment, ExperimentResponse } from "../types";
-import { getExperiments, runExperiment } from "../api";
+import { runExperiment } from "../api";
+import { useExperiments } from "../contexts/ExperimentContext";
 
 export default function Run() {
-  const [experiments, setExperiments] = useState<Experiment[]>([]);
+  const { experiments, loading, error } = useExperiments();
   const [selectedExperiment, setSelectedExperiment] = useState<number | null>(null);
   const [llmNames, setLlmNames] = useState<string[]>([]);
   const [responses, setResponses] = useState<{ [llmName: string]: ExperimentResponse[] }>({});
 
   useEffect(() => {
     document.title = "Test Page";
-    getExperiments().then((data) => setExperiments(data));
   }, []);
+
+  if (error) return <Typography color="error">{error}</Typography>;
 
   const handleCheckboxChange = (llmName: string) => {
     setLlmNames((prev) => (prev.includes(llmName) ? prev.filter((name) => name !== llmName) : [...prev, llmName]));
@@ -79,11 +81,15 @@ export default function Run() {
               value={selectedExperiment?.toString() ?? ""}
               label="Experiment Name"
               onChange={(event) => setSelectedExperiment(Number(event.target.value))}>
-              {experiments.map((experiment) => (
-                <MenuItem key={experiment.id} value={experiment.id}>
-                  {experiment.name}
-                </MenuItem>
-              ))}
+              {loading ? (
+                <Typography>Loading...</Typography>
+              ) : (
+                experiments.map((experiment) => (
+                  <MenuItem key={experiment.id} value={experiment.id}>
+                    {experiment.name}
+                  </MenuItem>
+                ))
+              )}
             </Select>
           </FormControl>
           <Button variant="contained" color="primary" onClick={handleRunExperiment}>
