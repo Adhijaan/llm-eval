@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import Grid2 from "@mui/material/Grid2";
 import Modal from "../components/Modal";
-import { Experiment, ExperimentResponse } from "../types";
+import { ExperimentResponse } from "../types";
 import { runExperiment } from "../api";
 import { useExperiments } from "../contexts/ExperimentContext";
 

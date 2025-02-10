@@ -2,18 +2,19 @@
 import { useState, useEffect } from "react";
 import { Button, Container, Typography } from "@mui/material";
 import { red } from "@mui/material/colors";
-import ExperimentDesc from "../components/ExperimentDesc";
+import ExperimentList from "../components/ExperimentList";
+import ExperimentInfo from "../components/ExperimentInfo";
 import { useExperiments } from "../contexts/ExperimentContext";
+import { Experiment } from "../types";
 
 export default function Build() {
-  const { experiments, loading, error } = useExperiments();
-  const [selectedExperiment, setSelectedExperiment] = useState<number | null>(null);
+  const { experiments } = useExperiments();
+  const [selectedExperimentId, setSelectedExperimentId] = useState<number | null>(null);
+  const selectedExperiment = experiments.find((experiment) => experiment.id === selectedExperimentId);
 
   useEffect(() => {
     document.title = "Build";
   }, []);
-
-  if (error) return <Typography color="error">{error}</Typography>;
 
   return (
     <>
@@ -31,12 +32,22 @@ export default function Build() {
           Create Test Case
         </Button>
       </Container>
-      <Container maxWidth="lg"></Container>
-      {loading ? (
-        <Typography>Loading...</Typography>
-      ) : (
-        experiments.map((experiment, index) => <ExperimentDesc key={index} experiment={experiment} />)
-      )}
+      <Container
+        maxWidth={false}
+        sx={{
+          display: "flex",
+          gap: 3,
+          flexDirection: { xs: "column", md: "row" },
+          alignItems: { xs: "stretch", md: "flex-start" },
+        }}>
+        <ExperimentList selectedExperimentId={selectedExperimentId} setSelectedExperimentId={setSelectedExperimentId} />
+        {selectedExperiment && (
+          <ExperimentInfo
+            experiment={selectedExperiment}
+            setSelectedExperimentId={() => setSelectedExperimentId(null)}
+          />
+        )}
+      </Container>
     </>
   );
 }
