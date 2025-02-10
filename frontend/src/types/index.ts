@@ -1,7 +1,7 @@
 // TestCase interface
 export interface TestCase {
   id: number;
-  userMessage: string; // Maps to `user_message` in Pydantic
+  user_message: string; // Maps to `user_message` in Pydantic
   expectedOutput: string; // Maps to `expected_output`
   experiments?: Experiment[]; // Related Experiments
   testCaseResults?: TestCaseResult[]; // Related TestCaseResults
@@ -11,8 +11,8 @@ export interface TestCase {
 export interface Experiment {
   id: number;
   name: string;
-  systemPrompt: string; // Maps to `system_prompt`
-  userId: number; // Maps to `user_id`
+  system_prompt: string; // Maps to `system_prompt`
+  user_id: number; // Maps to `user_id`
   testCases?: TestCase[]; // Related TestCases
   runs?: ExperimentRun[]; // Related ExperimentRuns
 }
@@ -20,9 +20,9 @@ export interface Experiment {
 // ExperimentRun interface
 export interface ExperimentRun {
   id: number;
-  experimentId: number; // Maps to `experiment_id`
-  llmModel: string; // Maps to `llm_model`
-  runDate: string; // Maps to `run_date`, ISO 8601 format
+  experiment_id: number; // Maps to `experiment_id`
+  llm_model: string; // Maps to `llm_model`
+  run_date: string; // Maps to `run_date`, ISO 8601 format
   experiment?: Experiment; // Related Experiment
   testCaseResults?: TestCaseResult[]; // Related TestCaseResults
 }
@@ -30,9 +30,9 @@ export interface ExperimentRun {
 // TestCaseResult interface
 export interface TestCaseResult {
   id: number;
-  experimentRunId: number; // Maps to `experiment_run_id`
-  testCaseId: number; // Maps to `test_case_id`
-  llmModel: string; // Maps to `llm_model`
+  experiment_run_id: number; // Maps to `experiment_run_id`
+  test_case_id: number; // Maps to `test_case_id`
+  llm_model: string; // Maps to `llm_model`
   score: number; // Float, with a range [0, 100]
   experimentRun?: ExperimentRun; // Related ExperimentRun
   testCase?: TestCase; // Related TestCase
