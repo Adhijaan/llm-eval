@@ -4,17 +4,29 @@ import { Button, Container, Typography } from "@mui/material";
 import { red } from "@mui/material/colors";
 import ExperimentList from "../components/ExperimentList";
 import ExperimentInfo from "../components/ExperimentInfo";
+import CreateExperiment from "../components/CreateExperiment";
 import { useExperiments } from "../contexts/ExperimentContext";
 import { Experiment } from "../types";
+
+enum ViewState {
+  PLAIN,
+  CREATE_EXPERIMENT,
+  CREATE_TEST_CASE,
+  EXPERIMENT_DESC,
+}
 
 export default function Build() {
   const { experiments } = useExperiments();
   const [selectedExperimentId, setSelectedExperimentId] = useState<number | null>(null);
   const selectedExperiment = experiments.find((experiment) => experiment.id === selectedExperimentId);
+  const [viewState, setViewState] = useState<ViewState>(ViewState.PLAIN);
 
   useEffect(() => {
     document.title = "Build";
   }, []);
+  useEffect(() => {
+    selectedExperimentId ? setViewState(ViewState.EXPERIMENT_DESC) : setViewState(ViewState.PLAIN);
+  }, [selectedExperimentId]);
 
   return (
     <>
@@ -25,10 +37,14 @@ export default function Build() {
         Define experiements and assign test cases
       </Typography>
       <Container maxWidth={false} sx={{ mb: 4, pb: 1, borderColor: red, borderBottom: 1 }}>
-        <Button variant="contained" color="primary" sx={{ mr: 2 }}>
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ mr: 2 }}
+          onClick={() => setViewState(ViewState.CREATE_EXPERIMENT)}>
           Create Experiment
         </Button>
-        <Button variant="contained" color="primary">
+        <Button variant="outlined" color="primary">
           Create Test Case
         </Button>
       </Container>
@@ -41,12 +57,15 @@ export default function Build() {
           alignItems: { xs: "stretch", md: "flex-start" },
         }}>
         <ExperimentList selectedExperimentId={selectedExperimentId} setSelectedExperimentId={setSelectedExperimentId} />
-        {selectedExperiment && (
+
+        {viewState === ViewState.EXPERIMENT_DESC && selectedExperiment && (
           <ExperimentInfo
             experiment={selectedExperiment}
             setSelectedExperimentId={() => setSelectedExperimentId(null)}
           />
         )}
+        {viewState === ViewState.CREATE_EXPERIMENT && <CreateExperiment close={() => setViewState(ViewState.PLAIN)} />}
+        {/* {viewState === ViewState.CREATE_TEST_CASE &&  />} */}
       </Container>
     </>
   );
