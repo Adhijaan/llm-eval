@@ -1,7 +1,10 @@
-import { Button, Paper, TextField, Typography, Checkbox, Autocomplete } from "@mui/material";
+// components/CreateExperiment.tsx
+import { useState } from "react";
+import { Button, Paper, TextField, Typography, Checkbox, Autocomplete, Alert } from "@mui/material";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import { createExperiment } from "../api";
+import { Experiment } from "../types";
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -10,7 +13,54 @@ interface CreateExperimentProps {
   close: () => void;
 }
 
+interface FormErrors {
+  name?: string;
+  system_prompt?: string;
+  submit?: string;
+}
+
 export default function CreateExperiment({ close }: CreateExperimentProps) {
+  const [submitting, setSubmitting] = useState(false);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [experiment, setExperiment] = useState<Partial<Experiment>>({
+    name: "",
+    system_prompt: "",
+    user_id: 1, // TODO: Create an auth context to get the user id
+    testCases: [],
+  });
+
+  function validateForm(): boolean {
+    const newErrors: FormErrors = {};
+
+    if (!experiment.name?.trim()) {
+      newErrors.name = "Experiment name is required";
+    }
+
+    if (!experiment.system_prompt?.trim()) {
+      newErrors.system_prompt = "System prompt is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }
+
+  async function handleCreate() {
+    if (!validateForm()) return;
+
+    try {
+      setSubmitting(true);
+      setErrors({});
+      const { testCases, runs, id, ...experimentData } = experiment;
+      await createExperiment(experimentData as Omit<Experiment, "id" | "testCases" | "runs">);
+      close();
+    } catch (error) {
+      setErrors({ submit: "Failed to create experiment. Please try again." });
+      console.error("Failed to create experiment:", error);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   return (
     <Paper
       elevation={3}
@@ -25,10 +75,38 @@ export default function CreateExperiment({ close }: CreateExperimentProps) {
         Close
       </Button>
 
-      <Typography variant="h3" sx={{ textAlign: "center" }}>
+      <Typography variant="h3" sx={{ textAlign: "center", mb: 3 }}>
         Create Experiment
       </Typography>
-      <TextField multiline fullWidth maxRows={15} minRows={4} label={"System Prompt"} />
+
+      {errors.submit && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {errors.submit}
+        </Alert>
+      )}
+
+      <TextField
+        fullWidth
+        label="Experiment Name"
+        value={experiment.name}
+        onChange={(e) => setExperiment((prev) => ({ ...prev, name: e.target.value }))}
+        error={!!errors.name}
+        helperText={errors.name}
+        sx={{ mb: 2 }}
+      />
+
+      <TextField
+        multiline
+        fullWidth
+        maxRows={15}
+        minRows={4}
+        label="System Prompt"
+        value={experiment.system_prompt}
+        onChange={(e) => setExperiment((prev) => ({ ...prev, system_prompt: e.target.value }))}
+        error={!!errors.system_prompt}
+        helperText={errors.system_prompt}
+      />
+
       <Typography variant="body1" sx={{ mt: 2 }}>
         Add test cases to this experiment
       </Typography>
@@ -50,8 +128,8 @@ export default function CreateExperiment({ close }: CreateExperimentProps) {
         style={{ width: 500 }}
         renderInput={(params) => <TextField {...params} label="Checkboxes" placeholder="Favorites" />}
       />
-      <Button variant="contained" color="primary" sx={{ mt: 2 }}>
-        Create
+      <Button variant="contained" color="primary" sx={{ mt: 2 }} onClick={handleCreate} disabled={submitting}>
+        {submitting ? "Creating..." : "Create"}
       </Button>
     </Paper>
   );

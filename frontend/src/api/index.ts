@@ -17,7 +17,7 @@ export const getExperiments = async () => {
   return response.data;
 };
 
-export const createExperiment = async (experiment: Omit<Experiment, "id">) => {
+export const createExperiment = async (experiment: Omit<Experiment, "id" | "testCases" | "runs">) => {
   const response = await axios.post(`${API_BASE_URL}/api/experiments/`, experiment);
   return response.data;
 };
