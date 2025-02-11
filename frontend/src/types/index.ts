@@ -1,8 +1,9 @@
 // TestCase interface
 export interface TestCase {
   id: number;
+  name: string; // Maps to `name` in Pydantic
   user_message: string; // Maps to `user_message` in Pydantic
-  expectedOutput: string; // Maps to `expected_output`
+  expected_output: string; // Maps to `expected_output`
   experiments?: Experiment[]; // Related Experiments
   testCaseResults?: TestCaseResult[]; // Related TestCaseResults
 }

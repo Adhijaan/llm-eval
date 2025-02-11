@@ -5,6 +5,7 @@ import { red } from "@mui/material/colors";
 import ExperimentList from "../components/ExperimentList";
 import ExperimentInfo from "../components/ExperimentInfo";
 import CreateExperiment from "../components/CreateExperiment";
+import CreateTestCase from "../components/CreateTestCase";
 import { useExperiments } from "../contexts/ExperimentContext";
 import { Experiment } from "../types";
 
@@ -44,7 +45,7 @@ export default function Build() {
           onClick={() => setViewState(ViewState.CREATE_EXPERIMENT)}>
           Create Experiment
         </Button>
-        <Button variant="outlined" color="primary">
+        <Button variant="outlined" color="primary" onClick={() => setViewState(ViewState.CREATE_TEST_CASE)}>
           Create Test Case
         </Button>
       </Container>
@@ -65,7 +66,7 @@ export default function Build() {
           />
         )}
         {viewState === ViewState.CREATE_EXPERIMENT && <CreateExperiment close={() => setViewState(ViewState.PLAIN)} />}
-        {/* {viewState === ViewState.CREATE_TEST_CASE &&  />} */}
+        {viewState === ViewState.CREATE_TEST_CASE && <CreateTestCase close={() => setViewState(ViewState.PLAIN)} />}
       </Container>
     </>
   );

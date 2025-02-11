@@ -3,7 +3,7 @@ import { Experiment, TestCase, TestCaseResult } from "../types";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export const createTestCase = async (testCase: Omit<TestCase, "id">) => {
+export const createTestCase = async (testCase: Omit<TestCase, "id" | "testCaseResults">) => {
   const response = await axios.post(`${API_BASE_URL}/api/test-cases/`, testCase);
   return response.data;
 };
