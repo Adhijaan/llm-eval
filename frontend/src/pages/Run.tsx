@@ -21,6 +21,7 @@ import { useExperiments } from "../contexts/ExperimentContext";
 
 export default function Run() {
   const { experiments, loading, error } = useExperiments();
+  const [runningExperiment, setRunningExperiment] = useState(false);
   const [selectedExperiment, setSelectedExperiment] = useState<number | null>(null);
   const [llmNames, setLlmNames] = useState<string[]>([]);
   const [responses, setResponses] = useState<{ [llmName: string]: ExperimentResponse[] }>({});
@@ -40,6 +41,7 @@ export default function Run() {
       alert("Please select an experiment.");
       return;
     }
+    setRunningExperiment(true);
 
     const newResponses: { [llmName: string]: ExperimentResponse[] } = {};
     for (const llmName of llmNames) {
@@ -57,7 +59,7 @@ export default function Run() {
         newResponses[llmName] = [];
       }
     }
-
+    setRunningExperiment(false);
     console.log("Updated Responses:", newResponses); // Debugging
     setResponses(newResponses);
   };
@@ -70,7 +72,6 @@ export default function Run() {
       <Typography variant="h6" align="center" gutterBottom sx={{ mb: 4 }}>
         Run your Experiments on your choice of LLMs and compare the results.
       </Typography>
-
       <Container maxWidth="lg">
         <Box sx={{ mb: 4, display: "flex", alignItems: "center", gap: 2 }}>
           <FormControl fullWidth sx={{ minWidth: 300 }}>
@@ -122,7 +123,13 @@ export default function Run() {
           </FormGroup>
         </FormControl>
       </Container>
-
+      {runningExperiment ? (
+        <Typography align="center" gutterBottom>
+          Running Experiment... (This may take time if the Heroku dyno is asleep)
+        </Typography>
+      ) : (
+        <></>
+      )}
       <Container maxWidth="lg">
         <Box
           sx={{

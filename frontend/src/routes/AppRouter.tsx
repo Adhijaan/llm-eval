@@ -8,8 +8,8 @@ import Log from "../pages/Log";
 const AppRoutes = () => (
   <Router>
     <Routes>
-      <Route path="/Welcome" element={<Welcome />} />
-      <Route path="/" element={<Navbar />}>
+      <Route path="/" element={<Welcome />} />
+      <Route path="/App" element={<Navbar />}>
         <Route index element={<Run />} />
         <Route path="Run" element={<Run />} />
         <Route path="Build" element={<Build />} />

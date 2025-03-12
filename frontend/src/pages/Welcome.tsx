@@ -30,7 +30,7 @@ export default function Welcome() {
           fontSize: "1.1rem",
         }}
         component={Link}
-        to="/">
+        to="/App/Run">
         Get Started
       </Button>
     </Box>

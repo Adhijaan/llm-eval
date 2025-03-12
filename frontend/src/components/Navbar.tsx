@@ -14,13 +14,13 @@ const Dashboard: React.FC = () => {
 
         {/* Buttons in the middle */}
         <Box>
-          <NavLink to="/Build" style={{ textDecoration: "none" }}>
+          <NavLink to="/App/Build" style={{ textDecoration: "none" }}>
             <Button color="inherit">Build</Button>
           </NavLink>
-          <NavLink to="/Run" style={{ textDecoration: "none" }}>
+          <NavLink to="/App/Run" style={{ textDecoration: "none" }}>
             <Button color="inherit">Run</Button>
           </NavLink>
-          <NavLink to="/Log" style={{ textDecoration: "none" }}>
+          <NavLink to="/App/Log" style={{ textDecoration: "none" }}>
             <Button color="inherit">Log</Button>
           </NavLink>
         </Box>
