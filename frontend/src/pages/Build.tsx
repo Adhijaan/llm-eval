@@ -7,7 +7,7 @@ import ExperimentInfo from "../components/ExperimentInfo";
 import CreateExperiment from "../components/CreateExperiment";
 import CreateTestCase from "../components/CreateTestCase";
 import { useExperiments } from "../contexts/ExperimentContext";
-import { Experiment } from "../types";
+// import { Experiment } from "../types";
 
 enum ViewState {
   PLAIN,

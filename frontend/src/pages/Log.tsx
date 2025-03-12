@@ -68,9 +68,9 @@ export default function Log() {
           <TableBody>
             {results.map((result) => (
               <TableRow key={result.id}>
-                <TableCell>{result.experimentRunId}</TableCell>
-                <TableCell>{result.testCaseId}</TableCell>
-                <TableCell>{result.llmModel}</TableCell>
+                <TableCell>{result.experiment_run_id}</TableCell>
+                <TableCell>{result.test_case_id}</TableCell>
+                <TableCell>{result.llm_model}</TableCell>
               </TableRow>
             ))}
           </TableBody>
