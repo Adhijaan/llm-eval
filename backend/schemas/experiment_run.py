@@ -7,7 +7,7 @@ from datetime import datetime
 # Base schema for ExperimentRun
 class ExperimentRunBase(BaseModel):
     experiment_id: int
-    llm_model: str
+    # llm_model: str
     run_date: datetime
 
 # Schema for creating an ExperimentRun

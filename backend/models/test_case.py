@@ -6,8 +6,9 @@ from config import Base
 class TestCase(Base):
     __tablename__ = "testcases"
     id = Column(Integer, primary_key=True)
-    user_message = Column(Text)
-    expected_output = Column(Text)
+    name = Column(Text, nullable=False)
+    user_message = Column(Text, nullable=False)
+    expected_output = Column(Text, nullable=False)
     # Relationships
-    experiments = relationship("Experiment", secondary="experiment_test_cases", back_populates="test_cases")
+    experiments = relationship("Experiment", secondary="experimenttestcases", back_populates="test_cases")
     test_case_results = relationship("TestCaseResult", back_populates="test_case") 

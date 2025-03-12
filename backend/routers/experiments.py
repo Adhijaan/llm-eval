@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from config import get_supabase_client
 from schemas.experiment import ExperimentCreate, Experiment
 from pydantic import BaseModel
+from datetime import datetime
 from groq import Groq
 from dotenv import load_dotenv
 import os
@@ -56,7 +57,8 @@ def run_experiment(
     request: RunExperimentRequest,  # Accept the request body
     db=Depends(get_supabase_client)
 ):
-    model = request.model 
+    model = request.model
+
     # Fetch the system prompt
     experiment_data = db.table('experiments') \
                         .select('system_prompt') \
@@ -67,7 +69,7 @@ def run_experiment(
         return {"error": "Experiment not found"}
     system_prompt = experiment_data[0]['system_prompt']
 
-    # Fetch associated test case IDs in one query
+    # Fetch associated test case IDs
     associated_testcases = db.table('experimenttestcases') \
                              .select('test_case_id') \
                              .eq('experiment_id', experiment_id) \
@@ -75,14 +77,14 @@ def run_experiment(
                              .data
     test_case_ids = [tc['test_case_id'] for tc in associated_testcases]
 
-    # Fetch user messages for all test cases in a single query
+    # Fetch user messages for all test cases
     user_messages_data = db.table('testcases') \
-                           .select('user_message') \
+                           .select('id', 'user_message') \
                            .in_('id', test_case_ids) \
                            .execute() \
                            .data
-    user_messages = [message['user_message'] for message in user_messages_data]
-    
+    user_messages = {message['id']: message['user_message'] for message in user_messages_data}
+
     # Returns response from groq call to LLM
     def get_response(user_prompt):
         chat_completion = groq_client.chat.completions.create(
@@ -94,9 +96,33 @@ def run_experiment(
             temperature=0.5
         )
         return chat_completion.choices[0].message.content
-    
-    experiment_result = [{"user_prompt": user_message, "response" : get_response(user_message)} for user_message in user_messages]
 
-    print(experiment_result)
-    return experiment_result
+    # Create a new experiment run
+    run_date = datetime.now()
+    experiment_run_data = {
+        "experiment_id": experiment_id,
+        "llm_model": model,
+        "run_date": run_date.isoformat()
+    }
+    experiment_run = db.table('experimentruns').insert(experiment_run_data).execute()
+    experiment_run_id = experiment_run.data[0]['id']
 
+    # Run the experiment and store results
+    experiment_results = []
+    test_case_results = []
+    for test_case_id, user_message in user_messages.items():
+        response = get_response(user_message)
+        experiment_results.append({"user_prompt": user_message, "response": response})
+        
+        test_case_results.append({
+            "experiment_run_id": experiment_run_id,
+            "test_case_id": test_case_id,
+            "llm_model": model,
+            "score": None  # Add logic here to calculate score if needed
+        })
+
+    # Bulk insert into testcaseresults
+    db.table('testcaseresults').insert(test_case_results).execute()
+
+    # Return the experiment results
+    return experiment_results

@@ -6,8 +6,8 @@ from config import Base
 class TestCaseResult(Base):
     __tablename__ = "testcaseresults"
     id = Column(Integer, primary_key=True, index=True)
-    experiment_run_id = Column(Integer, ForeignKey("experimentruns.id"))
-    test_case_id = Column(Integer, ForeignKey("testcases.id"))
+    experiment_run_id = Column(Integer, ForeignKey("experimentruns.id"), nullable=True)
+    test_case_id = Column(Integer, ForeignKey("testcases.id"),nullable=True)
     llm_model = Column(Text)
     score = Column(Float, nullable=False)
 

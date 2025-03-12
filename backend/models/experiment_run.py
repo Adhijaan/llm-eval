@@ -7,7 +7,7 @@ class ExperimentRun(Base):
     __tablename__ = "experimentruns"
     id = Column(Integer, primary_key=True, index=True)
     experiment_id = Column(Integer, ForeignKey("experiments.id"), nullable=False)
-    llm_model = Column(Text)
+    # llm_model = Column(Text)
     run_date = Column(TIMESTAMP, nullable=False)
     
     # Relationships

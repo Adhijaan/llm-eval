@@ -6,10 +6,10 @@ from config import Base
 class Experiment(Base):
     __tablename__ = "experiments"
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(50))
+    name = Column(String)
     system_prompt = Column(Text)
     user_id = Column(Integer, ForeignKey("users.id"))
     # Relationships 
     user = relationship("User", back_populates="experiments")
-    test_cases = relationship("TestCase", secondary="experiment_test_cases", back_populates="experiments")
+    test_cases = relationship("TestCase", secondary="experimenttestcases", back_populates="experiments", lazy="dynamic")
     runs = relationship("ExperimentRun", back_populates="experiment")

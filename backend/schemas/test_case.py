@@ -5,8 +5,11 @@ from typing import List
 
 # Base schema for TestCase
 class TestCaseBase(BaseModel):
+    name: str
     user_message: str
     expected_output: str
+    experiments: List["Experiment"] = []  # Include related Experiments
+
 
 # Schema for creating a TestCase
 class TestCaseCreate(TestCaseBase):
@@ -15,7 +18,6 @@ class TestCaseCreate(TestCaseBase):
 # Schema for returning a TestCase
 class TestCase(TestCaseBase):
     id: int
-    experiments: List["Experiment"] = []  # Include related Experiments
     test_case_results: List["TestCaseResult"] = []  # Include related TestCaseResults
 
     class Config:

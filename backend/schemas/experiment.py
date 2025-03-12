@@ -1,7 +1,7 @@
 # schemas/experiment.py
 from __future__ import annotations
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 
 # Base schema for Experiment
 class ExperimentBase(BaseModel):
@@ -16,8 +16,8 @@ class ExperimentCreate(ExperimentBase):
 # Schema for returning an Experiment
 class Experiment(ExperimentBase):
     id: int
-    test_cases: List["TestCase"] = []  # Include related TestCases
-    runs: List["ExperimentRun"] = []   # Include related ExperimentRuns
+    test_cases: Optional[List["TestCase"]] = None  # Include related TestCases
+    runs: Optional[List["ExperimentRun"]] = None   # Include related ExperimentRuns
 
     class Config:
         from_attributes = True  # Allows ORM mode for SQLAlchemy
